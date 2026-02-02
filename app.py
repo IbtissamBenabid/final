@@ -71,12 +71,6 @@ filtered_suppliers = [name for name, data in suppliers_data.items()
                      if (selected_sector == "All" or data.get("metadata", {}).get("sector") == selected_sector) and
                         (selected_geography == "All" or data.get("metadata", {}).get("geography") == selected_geography)]
 
-# Show available suppliers in current filter
-if filtered_suppliers:
-    st.info(f"📋 **Available suppliers in current filter ({len(filtered_suppliers)}):** {', '.join(filtered_suppliers[:10])}{'...' if len(filtered_suppliers) > 10 else ''}")
-else:
-    st.warning("No suppliers match the current filters.")
-
 # Supplier selection with dropdown and custom input
 supplier_selection_method = st.radio(
     "Supplier Selection Method",
@@ -105,19 +99,60 @@ else:
 # Show company info if supplier is found
 if supplier_name and supplier_name in suppliers_data:
     supplier_info = suppliers_data[supplier_name]["metadata"]
-    st.success(f"✅ **{supplier_name}** found in database!")
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.metric("Sector", supplier_info["sector"])
-    with col2:
-        st.metric("Geography", supplier_info["geography"])
-    with col3:
-        st.metric("Size", supplier_info["size"])
-    
+
+    # Enhanced company information display
+    st.success(f"**{supplier_name}** - Company Profile Found!")
+
+    # Company overview card
+    with st.container():
+        st.markdown("### Company Overview")
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            st.markdown("**Sector**")
+            st.markdown(f"*{supplier_info['sector']}*")
+            # Add sector-specific insights
+            if supplier_info['sector'] == 'Technology':
+                st.caption("Software & digital solutions")
+            elif supplier_info['sector'] == 'Financial Services':
+                st.caption("Banking & financial services")
+            elif supplier_info['sector'] == 'Healthcare':
+                st.caption("Medical & pharmaceutical")
+            elif supplier_info['sector'] == 'Consulting & Professional Services':
+                st.caption("Business consulting")
+            else:
+                st.caption("Industrial & manufacturing")
+
+        with col2:
+            st.markdown("**Geography**")
+            st.markdown(f"*{supplier_info['geography']}*")
+            # Add geographical insights
+            if supplier_info['geography'] in ['USA', 'Germany', 'UK']:
+                st.caption("Western markets")
+            elif supplier_info['geography'] in ['China', 'India', 'South Korea', 'Japan']:
+                st.caption("Emerging markets")
+            else:
+                st.caption("Global operations")
+
+        with col3:
+            st.markdown("**Company Size**")
+            st.markdown(f"*{supplier_info['size']}*")
+            # Add size insights
+            if supplier_info['size'] == 'Large':
+                st.caption("Enterprise-level operations")
+            elif supplier_info['size'] == 'Multinational':
+                st.caption("Global presence")
+            else:
+                st.caption("Growing organization")
+
+    # Risk assessment readiness
+    st.markdown("### Risk Assessment Ready")
+    st.info("Pre-filled risk profiles available for this supplier. You can adjust the assessments in the sidebar as needed.")
+
     # Load supplier profile if available
     supplier_profile = suppliers_data.get(supplier_name, {}).get("profile", {})
 elif supplier_name and supplier_name not in suppliers_data:
-    st.info(f"ℹ️ **{supplier_name}** not found in database. Proceeding with manual risk assessment.")
+    st.info(f"**{supplier_name}** not found in database. Proceeding with manual risk assessment.")
     supplier_profile = {}
 else:
     supplier_profile = {}
@@ -179,5 +214,3 @@ if submitted:
     ax.set_xlabel('Risk Level')
     ax.set_ylabel('Number of Criteria')
     st.pyplot(fig)
-else:
-    st.info("Please select the risk levels for each criterion in the sidebar and click 'Classify Supplier' to view the results.")
