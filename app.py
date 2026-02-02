@@ -82,7 +82,7 @@ supplier_selection_method = st.radio(
 if supplier_selection_method == "Select from dropdown":
     if filtered_suppliers:
         supplier_name = st.selectbox(
-            "Select Supplier from Database", 
+            "Select Supplier from Database",
             filtered_suppliers,
             help="Choose from filtered suppliers in the database"
         )
@@ -90,11 +90,45 @@ if supplier_selection_method == "Select from dropdown":
         st.warning("No suppliers match the current filters. Try adjusting the filters or use 'Enter custom name'.")
         supplier_name = ""
 else:
-    supplier_name = st.text_input(
-        "Enter Supplier Name", 
-        placeholder="Enter supplier name...",
-        help="Type a supplier name for assessment"
+    # Enhanced search with autocomplete and case-insensitive matching
+    supplier_input = st.text_input(
+        "Search Supplier",
+        placeholder="Start typing supplier name...",
+        help="Type to search suppliers or enter custom name. Search is case-insensitive with autocomplete suggestions."
     )
+
+    # Case-insensitive search and autocomplete
+    if supplier_input:
+        # Find matching suppliers (case-insensitive)
+        input_lower = supplier_input.lower()
+        matching_suppliers = [
+            name for name in suppliers_data.keys()
+            if input_lower in name.lower()
+        ]
+
+        # Exact match (case-insensitive)
+        exact_matches = [name for name in suppliers_data.keys() if name.lower() == input_lower]
+
+        if exact_matches:
+            # Use the exact match from database (preserve original casing)
+            supplier_name = exact_matches[0]
+        elif matching_suppliers:
+            # Show autocomplete suggestions
+            st.markdown("**Suggestions:**")
+            selected_suggestion = st.selectbox(
+                "Select from suggestions or continue typing:",
+                [""] + matching_suppliers,
+                help="Choose a suggested supplier or keep typing for a custom name"
+            )
+            if selected_suggestion:
+                supplier_name = selected_suggestion
+            else:
+                supplier_name = supplier_input
+        else:
+            # No matches found, use as custom name
+            supplier_name = supplier_input
+    else:
+        supplier_name = ""
 
 # Show company info if supplier is found
 if supplier_name and supplier_name in suppliers_data:
