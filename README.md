@@ -1,95 +1,188 @@
 # TPRM Supplier Classification Dashboard
 
-A Streamlit-based web application for Third-Party Risk Management (TPRM) supplier classification and risk assessment.
+A comprehensive Streamlit-based web application for Third-Party Risk Management (TPRM) supplier classification and risk assessment with advanced filtering and company intelligence features.
 
 ## Features
 
-### Supplier Selection
-- Dropdown list of over 70 well-known suppliers across various industries
-- Option to enter custom supplier names
-- Pre-loaded risk profiles for major suppliers (Microsoft, Google, AWS, etc.)
+### Smart Supplier Selection
+- **Dual Selection Modes**:
+  - **Dropdown Selection**: Choose from filtered suppliers in the database
+  - **Custom Input**: Enter any supplier name for assessment
+- **Company Intelligence**: Instant display of sector, geography, and size for known suppliers
+- **Dynamic Filtering**: Sector and geography filters that update available suppliers in real-time
 
-### Risk Classification
-- **7 Categories** of risk assessment based on industry standards:
-  1. Supplier General Characteristics
-  2. Geographical Risk Criteria
-  3. Sector & Activity Criteria
-  4. Information Security & Cyber Risk
-  5. Business Continuity & Operational Risk
-  6. Financial & Legal Risk
-  7. ESG & Ethical Criteria
+### Comprehensive Risk Classification
+- **7 Risk Categories** with **28 individual criteria**:
+  1. **Supplier General Characteristics** (Criticality, Size, Activity, Dependency)
+  2. **Geographical Risk Criteria** (Country Risk, Data Hosting, Regulatory Alignment, Cross-border Flow)
+  3. **Sector & Activity Criteria** (Sector Sensitivity, Service Type, System Access, Process Outsourcing)
+  4. **Information Security & Cyber Risk** (Data Sensitivity, Security Certification, Incident History, Access Management)
+  5. **Business Continuity & Operational Risk** (BCP/DRP, RTO/RPO, SLA Availability, Subcontracting)
+  6. **Financial & Legal Risk** (Financial Stability, Legal Compliance, Insurance, Litigation History)
+  7. **ESG & Ethical Criteria** (Ethics Policy, Anti-corruption, Environmental Impact, Social Responsibility)
 
-### Filter Modes
-- **Normal Mode**: Quick assessment with overall risk selection per category
-- **Advanced Mode**: Detailed selection for each of the 28 individual criteria
+### Global Supplier Database
+- **23 Major Suppliers** from **8 Countries**:
+  - **USA**: Microsoft, Google, Apple, Oracle, Cisco, Accenture, JPMorgan Chase, Verizon, Pfizer
+  - **Germany**: SAP, Siemens
+  - **Ireland**: Salesforce, Accenture
+  - **China**: Alibaba, Tencent
+  - **India**: Reliance Industries
+  - **South Korea**: Samsung
+  - **Japan**: Toyota
+  - **UK**: Unilever
 
-### Dynamic Features
-- Filters automatically pre-fill based on selected supplier's known risk profile
-- Real-time risk calculation and visualization
-- Bar chart showing risk level distribution
+### Advanced Risk Assessment
+- **Pre-filled Profiles**: Automatic risk assessment loading for known suppliers
+- **Manual Assessment**: Complete flexibility for custom suppliers
+- **Real-time Calculation**: Dynamic risk scoring and visualization
+- **Risk Distribution Chart**: Visual breakdown of risk levels across all criteria
 
-### Results
-- Detailed breakdown of selected risk levels
-- Overall risk assessment
-- Visual risk distribution chart
+### Interactive Dashboard
+- **Sector & Geography Filters**: Narrow down suppliers by industry and location
+- **Available Suppliers Display**: See which suppliers match your current filters
+- **Responsive Design**: Clean, professional interface optimized for risk management workflows
 
 ## Installation
 
-1. Clone or download the project files
-2. Install required packages:
+1. **Clone or download** the project files to your local machine
+
+2. **Install required packages**:
    ```bash
    pip install -r requirements.txt
    ```
 
+3. **Verify Python environment** (Python 3.7+ recommended)
+
 ## Usage
 
-1. Run the Streamlit app:
+### Getting Started
+1. **Launch the application**:
    ```bash
    streamlit run app.py
    ```
 
-2. Open your browser to the provided local URL (usually http://localhost:8501)
+2. **Open your browser** to the provided URL (usually `http://localhost:8501`)
 
-3. Select a supplier from the dropdown or choose "Other" to enter a custom name
+### Supplier Assessment Workflow
 
-4. Choose between Normal or Advanced filtering mode
+#### Option 1: Database Supplier Selection
+1. **Apply Filters** (optional): Use sector and geography filters to narrow down suppliers
+2. **Select Mode**: Choose "Select from dropdown"
+3. **Pick Supplier**: Select from the filtered dropdown list
+4. **Review Company Info**: View sector, geography, and size automatically displayed
+5. **Adjust Risk Levels**: Modify pre-filled assessments in the sidebar as needed
 
-5. Adjust risk levels as needed
+#### Option 2: Custom Supplier Assessment
+1. **Select Mode**: Choose "Enter custom name"
+2. **Type Supplier Name**: Enter any supplier name
+3. **Manual Assessment**: Complete all 28 criteria in the sidebar form
+4. **Proceed**: Click "Classify Supplier" for results
 
-6. Click "Classify Supplier" to view results
+#### Risk Assessment
+1. **Expand Categories**: Use sidebar expanders to access all 7 risk categories
+2. **Select Risk Levels**: Choose appropriate risk level for each of the 28 criteria
+3. **Generate Results**: Click "Classify Supplier" to view comprehensive analysis
 
-## File Structure
+### Understanding Results
+- **Detailed Breakdown**: Risk level for each individual criterion
+- **Overall Assessment**: Aggregated risk score across all categories
+- **Visual Distribution**: Bar chart showing risk level distribution
+- **Export Ready**: Results suitable for reporting and documentation
 
-- `app.py`: Main Streamlit application
-- `suppliers_data.py`: Contains pre-assessed risk profiles for known suppliers
-- `requirements.txt`: Python dependencies
-- `README.md`: This file
+## Project Structure
+
+```
+├── app.py                 # Main Streamlit application
+├── suppliers_data.py      # Comprehensive supplier database with risk profiles
+├── requirements.txt       # Python dependencies
+├── README.md             # This documentation
+└── __pycache__/          # Python cache files (auto-generated)
+```
 
 ## Customization
 
 ### Adding New Suppliers
-Edit `suppliers_data.py` to add risk profiles for new suppliers:
+Edit `suppliers_data.py` to add new supplier profiles:
 
 ```python
-"New Supplier": {
-    "Category_Criterion": "Selected Option",
-    # ... all 28 criteria
+"New Company Name": {
+    "metadata": {
+        "sector": "Industry Sector",
+        "geography": "Country",
+        "size": "Company Size"
+    },
+    "profile": {
+        "1️⃣ Supplier General Characteristics_Supplier criticality": "Selected Option",
+        "1️⃣ Supplier General Characteristics_Supplier size": "Selected Option",
+        # ... complete all 28 criteria
+    }
 }
 ```
 
 ### Modifying Risk Criteria
-Update the `categories` dictionary in `app.py` to modify criteria or add new ones.
+Update the `categories` dictionary in `app.py` to modify existing criteria or add new ones.
 
-## Dependencies
+### Database Expansion
+- Add suppliers from new geographical regions
+- Include additional industry sectors
+- Update risk profiles based on new assessments
 
-- streamlit
-- pandas
-- matplotlib
+## Requirements
 
-## License
+- **Python**: 3.7 or higher
+- **Streamlit**: Latest stable version
+- **pandas**: For data manipulation
+- **matplotlib**: For visualization
 
-This project is for educational and demonstration purposes.
+## Use Cases
+
+- **Risk Management Teams**: Comprehensive supplier risk assessments
+- **Procurement Departments**: Pre-qualification of new suppliers
+- **Compliance Officers**: Regulatory compliance verification
+- **Security Teams**: Third-party security risk evaluation
+- **ESG Analysts**: Ethical and sustainability assessments
 
 ## Contributing
 
-Feel free to submit issues or pull requests for improvements.
+We welcome contributions! Please:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+### Areas for Enhancement
+- Additional supplier profiles
+- New risk categories or criteria
+- Enhanced visualization options
+- Export functionality (PDF/Excel reports)
+- Integration with external risk databases
+
+## License
+
+This project is for educational and demonstration purposes. Please ensure compliance with your organization's data usage policies when using in production environments.
+
+## Support
+
+For questions or issues:
+- Check the troubleshooting section below
+- Review the code comments in `app.py`
+- Submit an issue on the project repository
+
+## Troubleshooting
+
+### Common Issues
+- **App won't start**: Ensure all dependencies are installed (`pip install -r requirements.txt`)
+- **No suppliers showing**: Check that filters aren't too restrictive
+- **Risk calculation errors**: Verify all 28 criteria have valid selections
+
+### Performance Tips
+- The app is optimized for up to 100+ suppliers
+- For very large datasets, consider database integration
+- Use filters to improve performance with many suppliers
+
+---
+
+Built for comprehensive third-party risk management
