@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
+from suppliers_data import suppliers_data
 
 # Define the data for each category
 categories = {
@@ -53,77 +55,91 @@ risk_levels = ["Critical", "High", "Medium", "Low"]
 # Streamlit app
 st.title("TPRM Supplier Classification Dashboard")
 
-# Known suppliers list
-known_suppliers = [
-    # Tech Giants
-    "Microsoft", "Google", "Apple", "Amazon", "Meta (Facebook)", "Tesla", "Netflix", "Uber", "Airbnb",
-    # Cloud Providers
-    "Amazon Web Services (AWS)", "Google Cloud Platform (GCP)", "Microsoft Azure", "IBM Cloud", "Alibaba Cloud", "Tencent Cloud",
-    # Enterprise Software
-    "Oracle", "SAP", "Salesforce", "Adobe", "Autodesk", "Intuit", "Workday", "ServiceNow", "Slack", "Zoom",
-    # Hardware
-    "Cisco", "HP", "Dell", "Lenovo", "ASUS", "Samsung", "LG", "Intel", "Nvidia", "AMD", "Qualcomm",
-    # Telecom
-    "Verizon", "AT&T", "Vodafone", "Orange", "Telefónica", "Deutsche Telekom", "China Mobile", "NTT",
-    # Consulting & Professional Services
-    "Accenture", "Deloitte", "PwC", "EY", "KPMG", "Capgemini", "TCS", "Infosys", "Wipro", "McKinsey", "BCG", "Bain",
-    # Financial Services
-    "JPMorgan Chase", "Goldman Sachs", "HSBC", "Bank of America", "Citigroup", "Wells Fargo", "Barclays",
-    # Retail & E-commerce
-    "Walmart", "Alibaba", "eBay", "Shopify", "Square", "PayPal",
-    # Other
-    "VMware", "Red Hat", "Siemens", "GE", "Boeing", "Lockheed Martin", "Pfizer", "Johnson & Johnson"
-]
+# Get unique sectors and geographies
+all_sectors = sorted(set(supplier["metadata"]["sector"] for supplier in suppliers_data.values() if "metadata" in supplier))
+all_geographies = sorted(set(supplier["metadata"]["geography"] for supplier in suppliers_data.values() if "metadata" in supplier))
 
-# Supplier selection
-supplier_option = st.selectbox("Select Known Supplier or Choose Other", ["Other"] + known_suppliers, help="Choose from known suppliers or select 'Other' to enter custom name")
+# Filters
+col1, col2 = st.columns(2)
+with col1:
+    selected_sector = st.selectbox("Filter by Sector", ["All"] + all_sectors, help="Filter suppliers by sector")
+with col2:
+    selected_geography = st.selectbox("Filter by Geography", ["All"] + all_geographies, help="Filter suppliers by geography")
 
-if supplier_option == "Other":
-    supplier_name = st.text_input("Enter Supplier Name", placeholder="e.g., ABC Corp")
+# Filter suppliers
+filtered_suppliers = [name for name, data in suppliers_data.items() 
+                     if (selected_sector == "All" or data.get("metadata", {}).get("sector") == selected_sector) and
+                        (selected_geography == "All" or data.get("metadata", {}).get("geography") == selected_geography)]
+
+# Show available suppliers in current filter
+if filtered_suppliers:
+    st.info(f"📋 **Available suppliers in current filter ({len(filtered_suppliers)}):** {', '.join(filtered_suppliers[:10])}{'...' if len(filtered_suppliers) > 10 else ''}")
 else:
-    supplier_name = supplier_option
+    st.warning("No suppliers match the current filters.")
 
-# Advanced mode toggle
-advanced_mode = st.checkbox("Advanced Filters", help="Enable detailed risk selection per criterion")
+# Supplier selection with dropdown and custom input
+supplier_selection_method = st.radio(
+    "Supplier Selection Method",
+    ["Select from dropdown", "Enter custom name"],
+    horizontal=True,
+    help="Choose how to select or enter the supplier name"
+)
 
-if advanced_mode:
-    # Advanced: filters in sidebar with expanders
-    with st.sidebar.form("classification_form"):
-        st.header("Advanced Risk Selection")
-        selected_levels = {}
-        for cat_name, criteria_list in categories.items():
-            with st.expander(cat_name):
-                for crit in criteria_list:
-                    key = f"{cat_name}_{crit['Criteria']}"
-                    selected_levels[key] = st.selectbox(
-                        crit['Criteria'],
-                        options=crit['Options'],
-                        index=0,
-                        key=key,
-                        help=f"Select the most appropriate risk level for {crit['Criteria']}"
-                    )
-        
-        submitted = st.form_submit_button("Classify Supplier", type="primary")
+if supplier_selection_method == "Select from dropdown":
+    if filtered_suppliers:
+        supplier_name = st.selectbox(
+            "Select Supplier from Database", 
+            filtered_suppliers,
+            help="Choose from filtered suppliers in the database"
+        )
+    else:
+        st.warning("No suppliers match the current filters. Try adjusting the filters or use 'Enter custom name'.")
+        supplier_name = ""
 else:
-    # Normal: filters in main area
-    st.header("Select Overall Risk Levels")
-    with st.form("classification_form"):
-        selected_levels = {}
-        st.write("Select overall risk level for each category:")
-        for cat_name, criteria_list in categories.items():
-            overall_risk = st.selectbox(
-                f"Overall Risk for {cat_name}",
-                options=risk_levels,
-                index=0,
-                key=f"overall_{cat_name}",
-                help=f"Select the overall risk level for {cat_name}"
-            )
-            # Set all criteria in this category to the selected overall risk
+    supplier_name = st.text_input(
+        "Enter Supplier Name", 
+        placeholder="Enter supplier name...",
+        help="Type a supplier name for assessment"
+    )
+
+# Show company info if supplier is found
+if supplier_name and supplier_name in suppliers_data:
+    supplier_info = suppliers_data[supplier_name]["metadata"]
+    st.success(f"✅ **{supplier_name}** found in database!")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Sector", supplier_info["sector"])
+    with col2:
+        st.metric("Geography", supplier_info["geography"])
+    with col3:
+        st.metric("Size", supplier_info["size"])
+    
+    # Load supplier profile if available
+    supplier_profile = suppliers_data.get(supplier_name, {}).get("profile", {})
+elif supplier_name and supplier_name not in suppliers_data:
+    st.info(f"ℹ️ **{supplier_name}** not found in database. Proceeding with manual risk assessment.")
+    supplier_profile = {}
+else:
+    supplier_profile = {}
+
+# Advanced filters in sidebar
+with st.sidebar.form("classification_form"):
+    st.header("Advanced Risk Selection")
+    selected_levels = {}
+    for cat_name, criteria_list in categories.items():
+        with st.expander(cat_name):
             for crit in criteria_list:
                 key = f"{cat_name}_{crit['Criteria']}"
-                selected_levels[key] = crit['Options'][risk_levels.index(overall_risk)]
-        
-        submitted = st.form_submit_button("Classify Supplier", type="primary")
+                default_option = supplier_profile.get(key, crit['Options'][0])
+                selected_levels[key] = st.selectbox(
+                    crit['Criteria'],
+                    options=crit['Options'],
+                    index=crit['Options'].index(default_option),
+                    key=key,
+                    help=f"Select the most appropriate risk level for {crit['Criteria']}"
+                )
+    
+    submitted = st.form_submit_button("Classify Supplier", type="primary")
 
 if submitted:
     # Main content
