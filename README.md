@@ -2,6 +2,16 @@
 
 A comprehensive Streamlit-based web application for Third-Party Risk Management (TPRM) supplier classification and risk assessment with advanced filtering and company intelligence features.
 
+## Application Structure
+
+This application consists of two separate pages/windows:
+
+### 1. Risk Assessment Page
+The main operational interface for conducting supplier risk assessments.
+
+### 2. System Presentation Page
+A dedicated presentation window showcasing the complete TPRM framework, classification criteria, and system capabilities.
+
 ## Features
 
 ### Smart Supplier Selection
@@ -43,6 +53,13 @@ A comprehensive Streamlit-based web application for Third-Party Risk Management 
 - **Available Suppliers Display**: See which suppliers match your current filters
 - **Responsive Design**: Clean, professional interface optimized for risk management workflows
 
+### System Presentation Window
+- **Complete Framework Overview**: Detailed presentation of all 7 risk categories and 28 criteria
+- **Risk Level Matrix**: Visual breakdown of risk levels for each criterion
+- **System Capabilities**: Comprehensive overview of assessment features and technical architecture
+- **Usage Instructions**: Step-by-step guidance for both assessment and system administration
+- **Professional Presentation**: Enterprise-ready format for compliance and audit purposes
+
 ## Installation
 
 1. **Clone or download** the project files to your local machine
@@ -56,6 +73,11 @@ A comprehensive Streamlit-based web application for Third-Party Risk Management 
 
 ## Usage
 
+### Navigation
+The application features two separate pages/windows accessible via the sidebar navigation:
+- **Risk Assessment**: Main operational interface for supplier evaluations
+- **System Presentation**: Dedicated presentation window for framework overview and system capabilities
+
 ### Getting Started
 1. **Launch the application**:
    ```bash
@@ -63,6 +85,8 @@ A comprehensive Streamlit-based web application for Third-Party Risk Management 
    ```
 
 2. **Open your browser** to the provided URL (usually `http://localhost:8501`)
+
+3. **Navigate**: Use the sidebar radio buttons to switch between pages
 
 ### Supplier Assessment Workflow
 
